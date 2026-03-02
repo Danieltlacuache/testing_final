@@ -55,24 +55,29 @@ jobs:
 
 
   deploy-prod:
-      name: CD Production
-      needs: release 
-      runs-on: ubuntu-latest
-      environment: production 
+    name: CD Production
+    needs: release 
+    runs-on: ubuntu-latest
+    environment: production 
 
-      steps:
-        - name: Download artifact
-          uses: actions/download-artifact@v4
-          with:
-            name: dist
-            path: dist/
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
 
-        - name: Deploy-Prod
-          uses: cloudflare/wrangler-action@v3
-          with:
-            apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-            accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-            command: deploy dist/practice4/index.js --name testing-final --env production --compatibility-date 2026-02-26 --compatibility-flags=nodejs_compat --assets dist/client
+      # 👇 Agrega esto temporalmente para diagnosticar
+      - name: Debug - List files
+        run: find dist/ -type f
+
+      - name: Deploy-Prod
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Sin --env production si no está en wrangler.toml
+          command: deploy dist/practice4/index.js --name testing-final-production --compatibility-date 2026-02-26 --compatibility-flags=nodejs_compat --assets dist/client
   
 
 
